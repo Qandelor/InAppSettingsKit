@@ -227,11 +227,12 @@ CGRect IASKCGRectSwap(CGRect rect);
 - (void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
 
+	/* FIXME PHIPER 2015-02-18 removed because not available in app extension
 	NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
 	[dc addObserver:self selector:@selector(synchronizeSettings) name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
 	[dc addObserver:self selector:@selector(reload) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
 	[dc addObserver:self selector:@selector(synchronizeSettings) name:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication]];
-
+	*/
 	[self.tableView beginUpdates];
 	[self.tableView endUpdates];
 }
@@ -252,10 +253,13 @@ CGRect IASKCGRectSwap(CGRect rect);
 		[dc removeObserver:self name:NSUserDefaultsDidChangeNotification object:udSettingsStore.defaults];
 		[dc removeObserver:self name:kIASKAppSettingChanged object:self];
 	}
+	[dc removeObserver:self name:NSUserDefaultsDidChangeNotification object:[NSUserDefaults standardUserDefaults]];
+	[dc removeObserver:self name:kIASKAppSettingChanged object:self];
+	/* FIXME PHIPER 2015-02-18 removed because not available in app extension
 	[dc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
 	[dc removeObserver:self name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
 	[dc removeObserver:self name:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication]];
-
+	*/
 	[super viewDidDisappear:animated];
 }
 
@@ -438,13 +442,14 @@ CGRect IASKCGRectSwap(CGRect rect);
 	}
 	IASK_IF_IOS7_OR_GREATER
 	(
+	 /* FIXME PHIPER 2015-02-18 removed because not available in app extension
 	 NSDictionary *rowHeights = @{UIContentSizeCategoryExtraSmall: @(44),
 								  UIContentSizeCategorySmall: @(44),
 								  UIContentSizeCategoryMedium: @(44),
 								  UIContentSizeCategoryLarge: @(44),
 								  UIContentSizeCategoryExtraLarge: @(47)};
-	 CGFloat rowHeight = (CGFloat)[rowHeights[UIApplication.sharedApplication.preferredContentSizeCategory] doubleValue];
-	 return rowHeight != 0 ? rowHeight : 51;
+	 return (CGFloat)[rowHeights[UIApplication.sharedApplication.preferredContentSizeCategory] doubleValue] ? : 51;
+	 */
 	);
 	return 44;
 }
@@ -771,7 +776,9 @@ CGRect IASKCGRectSwap(CGRect rect);
         
     } else if ([[specifier type] isEqualToString:kIASKOpenURLSpecifier]) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
-		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[specifier localizedObjectForKey:kIASKFile]]];
+		/* FIXME PHIPER 2015-02-18 removed because not available in app extension
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[specifier localizedObjectForKey:kIASKFile]]];
+		 */
     } else if ([[specifier type] isEqualToString:kIASKButtonSpecifier]) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         if ([self.delegate respondsToSelector:@selector(settingsViewController:buttonTappedForSpecifier:)]) {
@@ -843,19 +850,23 @@ CGRect IASKCGRectSwap(CGRect rect);
             
             mailViewController.mailComposeDelegate = vc;
             _currentChildViewController = mailViewController;
+			/* FIXME PHIPER 2015-02-18 removed because not available in app extension
             UIStatusBarStyle savedStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
             [vc presentViewController:mailViewController animated:YES completion:^{
 			    [UIApplication sharedApplication].statusBarStyle = savedStatusBarStyle;
             }];
+			 */
 			
         } else {
-            UIAlertView *alert = [[UIAlertView alloc]
+			/* FIXME PHIPER 2015-02-18 removed because not available in app extension
+			 UIAlertView *alert = [[UIAlertView alloc]
                                   initWithTitle:NSLocalizedString(@"Mail not configured", @"InAppSettingsKit")
                                   message:NSLocalizedString(@"This device is not configured for sending Email. Please configure the Mail settings in the Settings app.", @"InAppSettingsKit")
                                   delegate: nil
                                   cancelButtonTitle:NSLocalizedString(@"OK", @"InAppSettingsKit")
                                   otherButtonTitles:nil];
             [alert show];
+			 */
         }
         
     } else if ([[specifier type] isEqualToString:kIASKCustomViewSpecifier] && [self.delegate respondsToSelector:@selector(settingsViewController:tableView:didSelectCustomViewSpecifier:)]) {
