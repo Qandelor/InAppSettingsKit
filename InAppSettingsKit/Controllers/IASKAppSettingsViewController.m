@@ -61,6 +61,13 @@ CGRect IASKCGRectSwap(CGRect rect);
 - (void)reload;
 @end
 
+@implementation IASKSegueContext
+
+@synthesize controller = _controller;
+@synthesize specifier = _specifier;
+
+@end
+
 @implementation IASKAppSettingsViewController
 //synthesize properties from protocol
 @synthesize settingsReader = _settingsReader;
@@ -720,6 +727,13 @@ CGRect IASKCGRectSwap(CGRect rect);
         IASKPSTextFieldSpecifierViewCell *textFieldCell = (id)[tableView cellForRowAtIndexPath:indexPath];
         [textFieldCell.textField becomeFirstResponder];		
 	} else if ([[specifier type] isEqualToString:kIASKPSChildPaneSpecifier]) {
+		if ([specifier viewControllerStoryBoardSegueID]){
+			IASKSegueContext *context = [[IASKSegueContext alloc] init];
+			context.controller = self;
+			context.specifier = specifier;
+			[self performSegueWithIdentifier:[specifier viewControllerStoryBoardSegueID] sender:context];
+			return;
+		}
         if ([specifier viewControllerStoryBoardID]){
             NSString *storyBoardFileFromSpecifier = [specifier viewControllerStoryBoardFile];
             storyBoardFileFromSpecifier = storyBoardFileFromSpecifier && storyBoardFileFromSpecifier.length > 0 ? storyBoardFileFromSpecifier : [[NSBundle mainBundle].infoDictionary objectForKey:@"UIMainStoryboardFile"];

@@ -71,4 +71,14 @@
 - (void)synchronizeSettings;
 - (void)dismiss:(id)sender;
 - (void)setHiddenKeys:(NSSet*)hiddenKeys animated:(BOOL)animated;
+
 @end
+
+
+@interface IASKSegueContext : NSObject
+
+@property IASKAppSettingsViewController *controller;
+@property IASKSpecifier *specifier;
+
+@end
+
