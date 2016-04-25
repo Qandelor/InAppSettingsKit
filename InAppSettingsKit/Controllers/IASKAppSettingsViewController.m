@@ -227,11 +227,13 @@ CGRect IASKCGRectSwap(CGRect rect);
 - (void)viewDidAppear:(BOOL)animated {
 	[super viewDidAppear:animated];
 
+#if !defined(IASK_APP_EXTENSION)
+	// [UIApplication sahredApplication] is unavailable for app extensions
 	NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
 	[dc addObserver:self selector:@selector(synchronizeSettings) name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
 	[dc addObserver:self selector:@selector(reload) name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
 	[dc addObserver:self selector:@selector(synchronizeSettings) name:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication]];
-
+#endif
 	[self.tableView beginUpdates];
 	[self.tableView endUpdates];
 }
@@ -252,10 +254,14 @@ CGRect IASKCGRectSwap(CGRect rect);
 		[dc removeObserver:self name:NSUserDefaultsDidChangeNotification object:udSettingsStore.defaults];
 		[dc removeObserver:self name:kIASKAppSettingChanged object:self];
 	}
+	[dc removeObserver:self name:NSUserDefaultsDidChangeNotification object:[NSUserDefaults standardUserDefaults]];
+	[dc removeObserver:self name:kIASKAppSettingChanged object:self];
+#if !defined(IASK_APP_EXTENSION)
+	// [UIApplication sahredApplication] is unavailable for app extensions
 	[dc removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:[UIApplication sharedApplication]];
 	[dc removeObserver:self name:UIApplicationWillEnterForegroundNotification object:[UIApplication sharedApplication]];
 	[dc removeObserver:self name:UIApplicationWillTerminateNotification object:[UIApplication sharedApplication]];
-
+#endif
 	[super viewDidDisappear:animated];
 }
 
@@ -438,13 +444,15 @@ CGRect IASKCGRectSwap(CGRect rect);
 	}
 	IASK_IF_IOS7_OR_GREATER
 	(
+#if !defined(IASK_APP_EXTENSION)
+	 // [UIApplication sahredApplication] is unavailable for app extensions
 	 NSDictionary *rowHeights = @{UIContentSizeCategoryExtraSmall: @(44),
 								  UIContentSizeCategorySmall: @(44),
 								  UIContentSizeCategoryMedium: @(44),
 								  UIContentSizeCategoryLarge: @(44),
 								  UIContentSizeCategoryExtraLarge: @(47)};
-	 CGFloat rowHeight = (CGFloat)[rowHeights[UIApplication.sharedApplication.preferredContentSizeCategory] doubleValue];
-	 return rowHeight != 0 ? rowHeight : 51;
+	 return (CGFloat)[rowHeights[UIApplication.sharedApplication.preferredContentSizeCategory] doubleValue] ? : 51;
+#endif
 	);
 	return 44;
 }
@@ -771,7 +779,10 @@ CGRect IASKCGRectSwap(CGRect rect);
         
     } else if ([[specifier type] isEqualToString:kIASKOpenURLSpecifier]) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
-		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:[specifier localizedObjectForKey:kIASKFile]]];
+#if !defined(IASK_APP_EXTENSION)
+		// [UIApplication sahredApplication] is unavailable for app extensions
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[specifier localizedObjectForKey:kIASKFile]]];
+#endif
     } else if ([[specifier type] isEqualToString:kIASKButtonSpecifier]) {
         [tableView deselectRowAtIndexPath:indexPath animated:YES];
         if ([self.delegate respondsToSelector:@selector(settingsViewController:buttonTappedForSpecifier:)]) {
@@ -843,19 +854,26 @@ CGRect IASKCGRectSwap(CGRect rect);
             
             mailViewController.mailComposeDelegate = vc;
             _currentChildViewController = mailViewController;
+#if !defined(IASK_APP_EXTENSION)
+			// [UIApplication sahredApplication] is unavailable for app extensions
             UIStatusBarStyle savedStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
             [vc presentViewController:mailViewController animated:YES completion:^{
 			    [UIApplication sharedApplication].statusBarStyle = savedStatusBarStyle;
             }];
+#endif
 			
         } else {
-            UIAlertView *alert = [[UIAlertView alloc]
+#if !defined(IASK_APP_EXTENSION)
+			// [UIApplication sahredApplication] is unavailable for app extensions
+
+			 UIAlertView *alert = [[UIAlertView alloc]
                                   initWithTitle:NSLocalizedString(@"Mail not configured", @"InAppSettingsKit")
                                   message:NSLocalizedString(@"This device is not configured for sending Email. Please configure the Mail settings in the Settings app.", @"InAppSettingsKit")
                                   delegate: nil
                                   cancelButtonTitle:NSLocalizedString(@"OK", @"InAppSettingsKit")
                                   otherButtonTitles:nil];
             [alert show];
+#endif
         }
         
     } else if ([[specifier type] isEqualToString:kIASKCustomViewSpecifier] && [self.delegate respondsToSelector:@selector(settingsViewController:tableView:didSelectCustomViewSpecifier:)]) {

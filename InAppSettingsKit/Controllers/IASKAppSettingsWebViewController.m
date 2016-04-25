@@ -60,6 +60,8 @@
 }
 
 - (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+#if !defined(IASK_APP_EXTENSION)
+	// [UIApplication sahredApplication] is unavailable for app extensions
 	NSURL *newURL = [request URL];
 	
 	// intercept mailto URL and send it to an in-app Mail compose view instead
@@ -130,6 +132,7 @@
 		[self presentViewController:mailViewController animated:YES completion:^{
 			[UIApplication sharedApplication].statusBarStyle = savedStatusBarStyle;
 		}];
+
 		return NO;
 	}
 	
@@ -138,6 +141,7 @@
 		return YES;
 	}
 	[[UIApplication sharedApplication] openURL:newURL];
+#endif
 	return NO;
 }
 
