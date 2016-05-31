@@ -71,6 +71,7 @@
 - (void)synchronizeSettings;
 - (void)dismiss:(id)sender;
 - (void)setHiddenKeys:(NSSet*)hiddenKeys animated:(BOOL)animated;
+- (void)sliderChangedValue:(id)sender;
 
 @end
 
