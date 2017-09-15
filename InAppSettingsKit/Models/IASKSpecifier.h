@@ -34,6 +34,7 @@
 - (NSString*)localizedObjectForKey:(NSString*)key;
 - (NSString*)title;
 - (NSString*)subtitle;
+- (NSString*)placeholder;
 - (NSString*)key;
 - (NSString*)type;
 - (NSString*)titleForCurrentValue:(id)currentValue;
@@ -61,6 +62,7 @@
 - (NSString*)viewControllerStoryBoardFile;
 - (NSString*)viewControllerStoryBoardID;
 - (NSString*)viewControllerStoryBoardSegueID;
+- (NSString*)segueIdentifier;
 - (Class)buttonClass;
 - (SEL)buttonAction;
 - (UIImage *)cellImage;
